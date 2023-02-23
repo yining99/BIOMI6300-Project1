@@ -3,21 +3,144 @@ title: "Project 1"
 author: "YS"
 date: "2023-02-23"
 output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## Childhood stunting
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Childhood stunting is a global public health issue. Stunting is
+determined by comparing children's height to a reference population of
+children of "normal" nutrition levels.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+I found the data set from United Nations Children's Fund (UNICEF). The
+provided dataset contains the following variables:
 
-```{r cars}
-summary(cars)
+-   WHO Regions (**who_regions**)
+-   World Bank Income Group (**wbincgrp**)
+-   Prevalence of biologically male children that are stunted
+    (**maleprev**)
+-   Prevalence of biologically female children that are stunted
+    (**femaleprev**)
+-   Prevalence of urban children that are stunted (**urbanprev**)
+-   Prevalence of rural children that are stunted (**ruralprev**)
+-   Prevalence of mothers with no education (**mneduprev**)
+
+I want to evaluate **what numeric predictors** are significantly
+associated with the national prevalence (**natprev**).
+
+### Step 1: load the package(s)
+
+```{r}
+library(tidyverse)
+library(tables)
 ```
+
+### Step 2: load in the data
+
+```{r data}
+df <- read_csv("./Data/UNICEF.csv")
+df
+```
+
+### Step 3: summary statistics of each numeric variable
+
+1.  national prevalence (natprev)
+
+```{r}
+cat("natprev_mean:", mean(df$natprev, trim = 0, na.rm = FALSE))
+```
+
+```{r}
+cat("natprev_median:", median(df$natprev, trim = 0, na.rm = FALSE))
+```
+
+```{r}
+natprev_max <- max(df$natprev, na.rm = FALSE)
+natprev_min <- min(df$natprev, na.rm = FALSE)
+range1 <- (natprev_max - natprev_min)
+cat("natprev_range:", range1)
+```
+
+```{r}
+cat("natprev_sd:", natprev_sd <- sd(df$natprev, na.rm = FALSE))
+```
+
+2.  Prevalence of biologically male children that are stunted (maleprev)
+
+```{r}
+cat("maleprev_mean:", mean(df$maleprev, trim = 0, na.rm = TRUE))
+```
+
+```{r}
+cat("maleprev_median:", median(df$maleprev, trim = 0, na.rm = TRUE))
+```
+
+```{r}
+maleprev_max <- max(df$maleprev, na.rm = TRUE)
+maleprev_min <- min(df$maleprev, na.rm = TRUE)
+range2 <- (maleprev_max - maleprev_min)
+cat("maleprev_range:", range2)
+```
+
+```{r}
+cat("maleprev_sd:", sd(df$maleprev, na.rm = TRUE))
+```
+
+3.  Prevalence of biologically female children that are stunted
+    (femaleprev)
+
+```{r}
+cat("femaleprev_mean:", mean(df$femaleprev, trim = 0, na.rm = TRUE))
+```
+
+```{r}
+cat("femaleprev_median:", median(df$femaleprev, trim = 0, na.rm = TRUE))
+```
+
+```{r}
+femaleprev_max <- max(df$femaleprev, na.rm = TRUE)
+femaleprev_min <- min(df$femaleprev, na.rm = TRUE)
+range3 <- (femaleprev_max - femaleprev_min)
+cat("femaleprev_range:", range3)
+```
+
+```{r}
+cat("femaleprev_sd:", sd(df$femaleprev, na.rm = TRUE))
+```
+
+4. Prevalence of urban children that are stunted (urbanprev)
+
+```{r}
+cat("urbanprev_mean:", mean(df$urbanprev, trim = 0, na.rm = TRUE))
+```
+
+```{r}
+cat("urbanprev_median:", median(df$urbanprev, trim = 0, na.rm = TRUE))
+```
+```{r}
+urbanprev_max <- max(df$urbanprev, na.rm = TRUE)
+urbanprev_min <- min(df$urbanprev, na.rm = TRUE)
+range4 <- (urbanprev_max - urbanprev_min)
+cat("urbanprev_range:", range4)
+```
+
+```{r}
+cat("urbanprev_sd:", sd(df$urbanprev, na.rm = TRUE))
+```
+
+5. Prevalence of rural children that are stunted (ruralprev)
+
+
+
+
+
+
 
 ## Including Plots
 
@@ -27,4 +150,5 @@ You can also embed plots, for example:
 plot(pressure)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Note that the `echo = FALSE` parameter was added to the code chunk to
+prevent printing of the R code that generated the plot.
