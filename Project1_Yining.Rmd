@@ -136,9 +136,46 @@ cat("urbanprev_sd:", sd(df$urbanprev, na.rm = TRUE))
 
 5. Prevalence of rural children that are stunted (ruralprev)
 
+```{r}
+cat("ruralprev_mean:", mean(df$ruralprev, trim = 0, na.rm = TRUE))
+```
+
+```{r}
+cat("ruralprev_median:", median(df$ruralprev, trim = 0, na.rm = TRUE))
+```
+
+```{r}
+ruralprev_max <- max(df$ruralprev, na.rm = TRUE)
+ruralprev_min <- min(df$ruralprev, na.rm = TRUE)
+range5 <- (ruralprev_max - ruralprev_min)
+cat("ruralprev_range:", range5)
+```
+
+```{r}
+cat("ruralprev_sd:", sd(df$ruralprev, na.rm = TRUE))
+```
+
+6. Prevalence of mothers with no education (mneduprev)
+
+```{r}
+cat("mneduprev_mean:", mean(df$mneduprev, trim = 0, na.rm = TRUE))
+```
 
 
+```{r}
+cat("mneduprev_median:", median(df$mneduprev, trim = 0, na.rm = TRUE))
+```
 
+```{r}
+mneduprev_max <- max(df$mneduprev, na.rm = TRUE)
+mneduprev_min <- min(df$mneduprev, na.rm = TRUE)
+range6 <- (mneduprev_max - mneduprev_min)
+cat("mneduprev_range:", range6)
+```
+
+```{r}
+cat("mneduprev_sd:", sd(df$mneduprev, na.rm = TRUE))
+```
 
 
 
