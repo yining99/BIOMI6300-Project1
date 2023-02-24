@@ -49,6 +49,9 @@ library(devtools)
 ### Step 2: load in the data
 
 ```{r data}
+
+# load the csv file and read it into a dataframe, which will be convenient for data summary
+
 df <- read_csv("./Data/UNICEF.csv")
 df
 ```
@@ -58,14 +61,27 @@ df
 1.  national prevalence (natprev)
 
 ```{r}
+
+# calculate the mean value
+# trim = 0 means no data will be removed
+# na.rm = FALSE means 'Do not remove the NA values'
+
 cat("natprev_mean:", mean(df$natprev, trim = 0, na.rm = FALSE))
 ```
 
 ```{r}
+
+# calculate the median
+
 cat("natprev_median:", median(df$natprev, trim = 0, na.rm = FALSE))
 ```
 
 ```{r}
+
+# range = max - min
+
+# to get rid of confusion, I added a number tail to the name range for each numeric variable
+
 natprev_max <- max(df$natprev, na.rm = FALSE)
 natprev_min <- min(df$natprev, na.rm = FALSE)
 range1 <- (natprev_max - natprev_min)
@@ -73,6 +89,9 @@ cat("natprev_range:", range1)
 ```
 
 ```{r}
+
+# calculate the standard deviation to measure the data variation or dispersion
+
 cat("natprev_sd:", natprev_sd <- sd(df$natprev, na.rm = FALSE))
 ```
 
