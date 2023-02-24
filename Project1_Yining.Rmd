@@ -31,14 +31,19 @@ provided dataset contains the following variables:
 -   Prevalence of rural children that are stunted (**ruralprev**)
 -   Prevalence of mothers with no education (**mneduprev**)
 
-I want to evaluate **what numeric predictors** are significantly
-associated with the national prevalence (**natprev**).
+I want to evaluate **what predictors** are significantly associated with
+the national prevalence (**natprev**).
 
 ### Step 1: load the package(s)
 
 ```{r}
+library(usethis)
 library(tidyverse)
 library(tables)
+library(ggpubr)
+library(broom)
+library(AICcmodavg)
+library(devtools)
 ```
 
 ### Step 2: load in the data
@@ -179,7 +184,7 @@ cat("mneduprev_sd:", sd(df$mneduprev, na.rm = TRUE))
 
 ### Step 4: plotting
 
-1. national prevalence based on WHO region, by year
+1.  national prevalence based on WHO region, by year
 
 ```{r}
 ggplot(data = df) +
@@ -191,7 +196,7 @@ ggplot(data = df) +
  geom_point()
 ```
 
-2. national prevalence based on World Bank income group, by year
+2.  national prevalence based on World Bank income group, by year
 
 ```{r}
 ggplot(data = df) +
@@ -202,10 +207,11 @@ ggplot(data = df) +
  aes(color=wbincgrp) +
  geom_point()
 ```
-^ Children in high income groups tend to be less likely to experience childhood stunting.
 
+\^ Children in high income groups tend to be less likely to experience
+childhood stunting.
 
-3. national prevalence in different WHO regions
+3.  national prevalence in different WHO regions
 
 ```{r}
 ggplot(df, aes(x = who_regions, y = natprev)) +
@@ -213,11 +219,19 @@ ggplot(df, aes(x = who_regions, y = natprev)) +
   geom_jitter(position = position_jitter(width = 0.2, height = 0))
 
 ```
-^EURO has the lowest childhood stunting prevalence. EMRO and WPRO had bigger ranges than the rest regions. 
 
+\^EURO has the lowest childhood stunting prevalence. EMRO and WPRO had
+bigger ranges than the rest regions.
 
+4.  national prevalence in different World Bank income groups
 
-4. national prevalence & prevalence of mothers with no education
+```{r}
+ggplot(df, aes(x = wbincgrp, y = natprev)) +
+  geom_boxplot(outlier.colour = "red") +
+  geom_jitter(position = position_jitter(width = 0.2, height = 0))
+```
+
+5.  national prevalence & prevalence of mothers with no education
 
 ```{r}
 ggplot(data = df) +
@@ -229,9 +243,12 @@ ggplot(data = df) +
   geom_smooth(method = "lm") +
   aes(color = who_regions)
 ```
-^Besides EURO, the childhood stunting prevalence of other WHO regions is in positive correlation with the prevalence of mothers with no education.
 
-5. national prevalence & male prevalence/female prevalence
+\^Besides EURO, the childhood stunting prevalence of other WHO regions
+is in positive correlation with the prevalence of mothers with no
+education.
+
+6.  national prevalence & male prevalence/female prevalence
 
 ```{r}
 ggplot(data = df) +
@@ -259,25 +276,64 @@ ggplot(data = df) +
   aes(color = who_regions)
 ```
 
-
 \^There is a linear correlation between national prevalence and female
 prevalence in terms of childhood stunting. All WHO regions have similar
 trends.
 
+### Step 5: statistic test
 
+1.  national prevalence in different WHO region
 
+H0: There is no difference in national prevalence in different WHO
+region.
 
 ```{r}
-summarise()
+one.way <- aov(natprev ~ who_regions, data = df)
+summary(one.way)
 ```
 
-## Including Plots
+\^Reject H0. There is a significant difference of childhood stunting
+prevalence on a national level in different WHO regions.
 
-You can also embed plots, for example:
+2.  national prevalence in different World Bank income groups
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+H0: There is no difference in national prevalence in world bank income
+groups.
+
+```{r}
+one.way <- aov(natprev ~ wbincgrp, data = df)
+summary(one.way)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to
-prevent printing of the R code that generated the plot.
+\^There is a significant difference of childhood stunting prevalence on
+a national level in different World Bank income groups.
+
+3.  childhood stunting prevalence in two genders
+
+H0: There is no difference in childhood stunting prevalence between male
+and female.
+
+```{r}
+t.test(df$maleprev, df$femaleprev)
+```
+
+\^Based on the p-value of 0.063, which is \> 0.05, we accept H0. There
+is no significant difference between male and female, which means gender
+could not be a factor that cause childhood stunting.
+
+4.  geographic locationa and national prevalence
+
+H0: there is no difference in national prevalence in rural and urban
+areas.
+
+```{r}
+t.test(df$urbanprev, df$ruralprev)
+```
+
+\^Based on the p-value of 2.282e-05, which is \> 0.05, we accept H0.
+There is no significant difference between rural and urban locations,
+which means geographic locations could not be a factor that cause
+childhood stunting.
+
+
+
