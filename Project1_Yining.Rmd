@@ -335,5 +335,6 @@ There is no significant difference between rural and urban locations,
 which means geographic locations could not be a factor that cause
 childhood stunting.
 
-
-
+```{r}
+utils::sessionInfo()
+```
