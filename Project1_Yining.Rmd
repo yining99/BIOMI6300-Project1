@@ -114,7 +114,7 @@ cat("femaleprev_range:", range3)
 cat("femaleprev_sd:", sd(df$femaleprev, na.rm = TRUE))
 ```
 
-4. Prevalence of urban children that are stunted (urbanprev)
+4.  Prevalence of urban children that are stunted (urbanprev)
 
 ```{r}
 cat("urbanprev_mean:", mean(df$urbanprev, trim = 0, na.rm = TRUE))
@@ -123,6 +123,7 @@ cat("urbanprev_mean:", mean(df$urbanprev, trim = 0, na.rm = TRUE))
 ```{r}
 cat("urbanprev_median:", median(df$urbanprev, trim = 0, na.rm = TRUE))
 ```
+
 ```{r}
 urbanprev_max <- max(df$urbanprev, na.rm = TRUE)
 urbanprev_min <- min(df$urbanprev, na.rm = TRUE)
@@ -134,7 +135,7 @@ cat("urbanprev_range:", range4)
 cat("urbanprev_sd:", sd(df$urbanprev, na.rm = TRUE))
 ```
 
-5. Prevalence of rural children that are stunted (ruralprev)
+5.  Prevalence of rural children that are stunted (ruralprev)
 
 ```{r}
 cat("ruralprev_mean:", mean(df$ruralprev, trim = 0, na.rm = TRUE))
@@ -155,12 +156,11 @@ cat("ruralprev_range:", range5)
 cat("ruralprev_sd:", sd(df$ruralprev, na.rm = TRUE))
 ```
 
-6. Prevalence of mothers with no education (mneduprev)
+6.  Prevalence of mothers with no education (mneduprev)
 
 ```{r}
 cat("mneduprev_mean:", mean(df$mneduprev, trim = 0, na.rm = TRUE))
 ```
-
 
 ```{r}
 cat("mneduprev_median:", median(df$mneduprev, trim = 0, na.rm = TRUE))
@@ -177,7 +177,99 @@ cat("mneduprev_range:", range6)
 cat("mneduprev_sd:", sd(df$mneduprev, na.rm = TRUE))
 ```
 
+### Step 4: plotting
 
+1. national prevalence based on WHO region, by year
+
+```{r}
+ggplot(data = df) +
+ aes(x=year) +
+ labs(x = "year") +
+ aes(y=natprev) +
+ labs(y="national prevalence") +
+ aes(color=who_regions) +
+ geom_point()
+```
+
+2. national prevalence based on World Bank income group, by year
+
+```{r}
+ggplot(data = df) +
+ aes(x=year) +
+ labs(x = "year") +
+ aes(y=natprev) +
+ labs(y="national prevalence") +
+ aes(color=wbincgrp) +
+ geom_point()
+```
+^ Children in high income groups tend to be less likely to experience childhood stunting.
+
+
+3. national prevalence in different WHO regions
+
+```{r}
+ggplot(df, aes(x = who_regions, y = natprev)) +
+  geom_boxplot(outlier.colour = "red") +
+  geom_jitter(position = position_jitter(width = 0.2, height = 0))
+
+```
+^EURO has the lowest childhood stunting prevalence. EMRO and WPRO had bigger ranges than the rest regions. 
+
+
+
+4. national prevalence & prevalence of mothers with no education
+
+```{r}
+ggplot(data = df) +
+  aes(x = mneduprev) +
+  labs(x = "prevalence of mothers with no education") +
+  aes(y = natprev) +
+  labs(y = "national prevalence") +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  aes(color = who_regions)
+```
+
+
+5. national prevalence & male prevalence/female prevalence
+
+```{r}
+ggplot(data = df) +
+  aes(x = maleprev) +
+  labs(x = "prevalence of stunting in male children") +
+  aes(y = natprev) +
+  labs(y = "national prevalence") +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  aes(color = who_regions)
+```
+
+\^There is a linear correlation between national prevalence and male
+prevalence in terms of childhood stunting. All WHO regions have similar
+trends.
+
+```{r}
+ggplot(data = df) +
+  aes(x = femaleprev) +
+  labs(x = "prevalence of stunting in female children") +
+  aes(y = natprev) +
+  labs(y = "national prevalence") +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  aes(color = who_regions)
+```
+
+
+\^There is a linear correlation between national prevalence and female
+prevalence in terms of childhood stunting. All WHO regions have similar
+trends.
+
+
+
+
+```{r}
+summarise()
+```
 
 ## Including Plots
 
