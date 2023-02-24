@@ -6,7 +6,7 @@ The discovery of factors that potentially affect childhood stunting prevalence
 
 ## Background description & goal:
 
-Childhood stunting is a global public health issue. By looking at the childhood stunting data set downloaded from WHO website, this project is aimed at discovering the factors that could affect the prevalence of childhood stunting. Potential factors include geographic locations, family income, education level of the mother, gender, etc.
+Childhood stunting is a global public health issue. By looking at the childhood stunting data set downloaded from UNICEF website, this project is aimed at discovering the factors that could affect the prevalence of childhood stunting. Potential factors include geographic locations, family income, education level of the mother, gender, etc.
 
 ## Findings:
 
@@ -16,7 +16,7 @@ There is no significant difference in stunting prevalence between male and femal
 
 ## This project includes:
 
-**Data folder :** The data set I downloaded from WHO website.
+**Data folder :** The data set I downloaded from UNICEF website.
 
 **Figure folder :** All the plots generated in this project.
 
