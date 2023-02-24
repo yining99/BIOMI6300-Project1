@@ -229,7 +229,7 @@ ggplot(data = df) +
   geom_smooth(method = "lm") +
   aes(color = who_regions)
 ```
-
+^Besides EURO, the childhood stunting prevalence of other WHO regions is in positive correlation with the prevalence of mothers with no education.
 
 5. national prevalence & male prevalence/female prevalence
 
