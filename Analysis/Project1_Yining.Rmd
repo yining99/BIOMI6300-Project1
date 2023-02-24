@@ -352,7 +352,7 @@ t.test(df$urbanprev, df$ruralprev)
 
 Childhood stunting has been affecting more and more children, and can be attributed to several reasons, such as malnutrition, disease and poor health. 
 
-By looking at the dataset from WHO, and based on the statistical test results, we can conclude that there is a significant difference in national prevalence of childhood stunting when it comes to geographic regions and incomes. These findings indicated the existence of health inequity and urges both governmental and non-governmental agencies to take actions in order to promote even resource distribution. 
+By looking at the dataset from UNICEF, and based on the statistical test results, we can conclude that there is a significant difference in national prevalence of childhood stunting when it comes to geographic regions and incomes. These findings indicated the existence of health inequity and urges both governmental and non-governmental agencies to take actions in order to promote even resource distribution. 
 
 Although there is no significant difference in stunting prevalence between male and female children, or between children who live in urban areas and rural areas, these variable could be potentially be used to predict childhood stunting by building models. For those categorical variables, they will also be taken into account regarding the prediction once they are treated as dumb variables. 
 
