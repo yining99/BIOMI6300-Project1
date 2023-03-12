@@ -1,0 +1,371 @@
+---
+title: "Project 1"
+author: "YS"
+date: "2023-02-23"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Childhood stunting
+
+Childhood stunting is a global public health issue. Stunting is
+determined by comparing children's height to a reference population of
+children of "normal" nutrition levels.
+
+I found the data set from United Nations Children's Fund (UNICEF). The
+provided dataset contains the following variables:
+
+-   WHO Regions (**who_regions**)
+-   World Bank Income Group (**wbincgrp**)
+-   Prevalence of biologically male children that are stunted
+    (**maleprev**)
+-   Prevalence of biologically female children that are stunted
+    (**femaleprev**)
+-   Prevalence of urban children that are stunted (**urbanprev**)
+-   Prevalence of rural children that are stunted (**ruralprev**)
+-   Prevalence of mothers with no education (**mneduprev**)
+
+I want to evaluate **what variables** are significantly associated with
+the national prevalence (**natprev**).
+
+### Step 1: load the package(s)
+
+```{r}
+library(usethis)
+library(tidyverse)
+library(tables)
+library(ggpubr)
+library(broom)
+library(AICcmodavg)
+library(devtools)
+```
+
+### Step 2: load in the data
+
+```{r data}
+
+# load the csv file and read it into a dataframe, which will be convenient for data summary
+
+df <- read_csv("./Data/UNICEF.csv")
+df
+```
+
+### Step 3: summary statistics of each numeric variable
+
+1.  national prevalence (natprev)
+
+```{r}
+
+# calculate the mean value
+# trim = 0 means no data will be removed
+# na.rm = FALSE means 'Do not remove the NA values'
+
+cat("natprev_mean:", mean(df$natprev, trim = 0, na.rm = FALSE))
+```
+
+```{r}
+
+# calculate the median
+
+cat("natprev_median:", median(df$natprev, trim = 0, na.rm = FALSE))
+```
+
+```{r}
+
+# range = max - min
+
+# to get rid of confusion, I added a number tail to the name range for each numeric variable
+
+natprev_max <- max(df$natprev, na.rm = FALSE)
+natprev_min <- min(df$natprev, na.rm = FALSE)
+range1 <- (natprev_max - natprev_min)
+cat("natprev_range:", range1)
+```
+
+```{r}
+
+# calculate the standard deviation to measure the data variation or dispersion
+
+cat("natprev_sd:", natprev_sd <- sd(df$natprev, na.rm = FALSE))
+```
+
+2.  Prevalence of biologically male children that are stunted (maleprev)
+
+```{r}
+cat("maleprev_mean:", mean(df$maleprev, trim = 0, na.rm = TRUE))
+```
+
+```{r}
+cat("maleprev_median:", median(df$maleprev, trim = 0, na.rm = TRUE))
+```
+
+```{r}
+maleprev_max <- max(df$maleprev, na.rm = TRUE)
+maleprev_min <- min(df$maleprev, na.rm = TRUE)
+range2 <- (maleprev_max - maleprev_min)
+cat("maleprev_range:", range2)
+```
+
+```{r}
+cat("maleprev_sd:", sd(df$maleprev, na.rm = TRUE))
+```
+
+3.  Prevalence of biologically female children that are stunted
+    (femaleprev)
+
+```{r}
+cat("femaleprev_mean:", mean(df$femaleprev, trim = 0, na.rm = TRUE))
+```
+
+```{r}
+cat("femaleprev_median:", median(df$femaleprev, trim = 0, na.rm = TRUE))
+```
+
+```{r}
+femaleprev_max <- max(df$femaleprev, na.rm = TRUE)
+femaleprev_min <- min(df$femaleprev, na.rm = TRUE)
+range3 <- (femaleprev_max - femaleprev_min)
+cat("femaleprev_range:", range3)
+```
+
+```{r}
+cat("femaleprev_sd:", sd(df$femaleprev, na.rm = TRUE))
+```
+
+4.  Prevalence of urban children that are stunted (urbanprev)
+
+```{r}
+cat("urbanprev_mean:", mean(df$urbanprev, trim = 0, na.rm = TRUE))
+```
+
+```{r}
+cat("urbanprev_median:", median(df$urbanprev, trim = 0, na.rm = TRUE))
+```
+
+```{r}
+urbanprev_max <- max(df$urbanprev, na.rm = TRUE)
+urbanprev_min <- min(df$urbanprev, na.rm = TRUE)
+range4 <- (urbanprev_max - urbanprev_min)
+cat("urbanprev_range:", range4)
+```
+
+```{r}
+cat("urbanprev_sd:", sd(df$urbanprev, na.rm = TRUE))
+```
+
+5.  Prevalence of rural children that are stunted (ruralprev)
+
+```{r}
+cat("ruralprev_mean:", mean(df$ruralprev, trim = 0, na.rm = TRUE))
+```
+
+```{r}
+cat("ruralprev_median:", median(df$ruralprev, trim = 0, na.rm = TRUE))
+```
+
+```{r}
+ruralprev_max <- max(df$ruralprev, na.rm = TRUE)
+ruralprev_min <- min(df$ruralprev, na.rm = TRUE)
+range5 <- (ruralprev_max - ruralprev_min)
+cat("ruralprev_range:", range5)
+```
+
+```{r}
+cat("ruralprev_sd:", sd(df$ruralprev, na.rm = TRUE))
+```
+
+6.  Prevalence of mothers with no education (mneduprev)
+
+```{r}
+cat("mneduprev_mean:", mean(df$mneduprev, trim = 0, na.rm = TRUE))
+```
+
+```{r}
+cat("mneduprev_median:", median(df$mneduprev, trim = 0, na.rm = TRUE))
+```
+
+```{r}
+mneduprev_max <- max(df$mneduprev, na.rm = TRUE)
+mneduprev_min <- min(df$mneduprev, na.rm = TRUE)
+range6 <- (mneduprev_max - mneduprev_min)
+cat("mneduprev_range:", range6)
+```
+
+```{r}
+cat("mneduprev_sd:", sd(df$mneduprev, na.rm = TRUE))
+```
+
+### Step 4: plotting
+
+1.  national prevalence based on WHO region, by year
+
+```{r}
+ggplot(data = df) +
+ aes(x=year) +
+ labs(x = "year") +
+ aes(y=natprev) +
+ labs(y="national prevalence") +
+ aes(color=who_regions) +
+ geom_point()
+```
+
+2.  national prevalence based on World Bank income group, by year
+
+```{r}
+ggplot(data = df) +
+ aes(x=year) +
+ labs(x = "year") +
+ aes(y=natprev) +
+ labs(y="national prevalence") +
+ aes(color=wbincgrp) +
+ geom_point()
+```
+
+\^ Children in high income groups tend to be less likely to experience
+childhood stunting.
+
+3.  national prevalence in different WHO regions
+
+```{r}
+ggplot(df, aes(x = who_regions, y = natprev)) +
+  geom_boxplot(outlier.colour = "red") +
+  geom_jitter(position = position_jitter(width = 0.2, height = 0))
+
+```
+
+\^EURO has the lowest childhood stunting prevalence. EMRO and WPRO had
+bigger ranges than the rest regions.
+
+4.  national prevalence in different World Bank income groups
+
+```{r}
+ggplot(df, aes(x = wbincgrp, y = natprev)) +
+  geom_boxplot(outlier.colour = "red") +
+  geom_jitter(position = position_jitter(width = 0.2, height = 0))
+```
+
+5.  national prevalence & prevalence of mothers with no education
+
+```{r}
+ggplot(data = df) +
+  aes(x = mneduprev) +
+  labs(x = "prevalence of mothers with no education") +
+  aes(y = natprev) +
+  labs(y = "national prevalence") +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  aes(color = who_regions)
+```
+
+\^Besides EURO, the childhood stunting prevalence of other WHO regions
+is in positive correlation with the prevalence of mothers with no
+education.
+
+6.  national prevalence & male prevalence/female prevalence
+
+```{r}
+ggplot(data = df) +
+  aes(x = maleprev) +
+  labs(x = "prevalence of stunting in male children") +
+  aes(y = natprev) +
+  labs(y = "national prevalence") +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  aes(color = who_regions)
+```
+
+\^There is a linear correlation between national prevalence and male
+prevalence in terms of childhood stunting. All WHO regions have similar
+trends.
+
+```{r}
+ggplot(data = df) +
+  aes(x = femaleprev) +
+  labs(x = "prevalence of stunting in female children") +
+  aes(y = natprev) +
+  labs(y = "national prevalence") +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  aes(color = who_regions)
+```
+
+\^There is a linear correlation between national prevalence and female
+prevalence in terms of childhood stunting. All WHO regions have similar
+trends.
+
+### Step 5: statistic test
+
+1.  national prevalence in different WHO region
+
+H0: There is no difference in national prevalence in different WHO
+region.
+
+```{r}
+one.way <- aov(natprev ~ who_regions, data = df)
+summary(one.way)
+```
+
+\^Reject H0. There is a significant difference of childhood stunting
+prevalence on a national level in different WHO regions.
+
+2.  national prevalence in different World Bank income groups
+
+H0: There is no difference in national prevalence in world bank income
+groups.
+
+```{r}
+one.way <- aov(natprev ~ wbincgrp, data = df)
+summary(one.way)
+```
+
+\^There is a significant difference of childhood stunting prevalence on
+a national level in different World Bank income groups.
+
+3.  childhood stunting prevalence in two genders
+
+H0: There is no difference in childhood stunting prevalence between male
+and female.
+
+```{r}
+t.test(df$maleprev, df$femaleprev)
+```
+
+\^Based on the p-value of 0.063, which is \> 0.05, we accept H0. There
+is no significant difference between male and female, which means gender
+could not be a factor that cause childhood stunting.
+
+4.  geographic locationa and national prevalence
+
+H0: there is no difference in national prevalence in rural and urban
+areas.
+
+```{r}
+t.test(df$urbanprev, df$ruralprev)
+```
+### Finale
+
+Childhood stunting has been affecting more and more children, and can be attributed to several reasons, such as malnutrition, disease and poor health. 
+
+By looking at the dataset from UNICEF, and based on the statistical test results, we can conclude that there is a significant difference in national prevalence of childhood stunting when it comes to geographic regions and incomes. These findings indicated the existence of health inequity and urges both governmental and non-governmental agencies to take actions in order to promote even resource distribution. 
+
+Although there is no significant difference in stunting prevalence between male and female children, or between children who live in urban areas and rural areas, these variable could be potentially be used to predict childhood stunting by building models. For those categorical variables, they will also be taken into account regarding the prediction once they are treated as dumb variables. 
+
+
+
+
+
+
+\^Based on the p-value of 2.282e-05, which is \> 0.05, we accept H0.
+There is no significant difference between rural and urban locations,
+which means geographic locations could not be a factor that cause
+childhood stunting.
+
+```{r}
+utils::sessionInfo()
+```
